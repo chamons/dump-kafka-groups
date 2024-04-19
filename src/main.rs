@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use itertools::Itertools;
 use rdkafka::{
     config::FromClientConfig, consumer::Consumer, groups::GroupList, util::Timeout, ClientConfig,
 };
@@ -21,5 +22,12 @@ fn main() {
     let url = std::env::args().nth(1).expect("Missing URL");
     let groups = fetch_group_list(&url);
     println!("Group Count: {}", groups.groups().len());
-    println!("{:?}", groups.groups());
+    println!(
+        "{:?}",
+        groups
+            .groups()
+            .iter()
+            .sorted_by_key(|g| g.name())
+            .collect::<Vec<_>>()
+    );
 }
